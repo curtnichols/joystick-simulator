@@ -5,6 +5,14 @@
 //----------------------------------------------------------------------------
 // These are currently supported boards configurations (with an ATMEGA32U4) 
 // that can mimic USB HID devices.
+//
+// Note on symbols like ARDUINO_AVR_PROMICRO: you can find the symbol defined
+// by your currently targeted board by showing verbose output during compilation.
+// Look for a symbol definition, e.g.
+//
+//    -DARDUINO_AVR_PROMICRO
+//
+// You can find the checkbox for verbosity under File/Preferences/Settings.
 
 #if defined(ARDUINO_AVR_PROMICRO)
   constexpr int FEEDBACK_LED = 17; // RX LED
@@ -52,7 +60,7 @@ void loop()
 
 //----------------------------------------------------------------------------
 // The main handler for serial input. This accumulates input from the serial
-// port and enters accumulates it into a command.
+// port and accumulates it into a command.
 
 enum State { Start, Accumulating, Ignoring };
 State state = Start;
