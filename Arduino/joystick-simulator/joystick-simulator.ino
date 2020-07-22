@@ -1,6 +1,11 @@
-// Echos inputs back to the serial port.
+//============================================================================
+// This program receives input on the serial port and responds back
+// on the serial port after parsing the input.
 
-// These are boards built on an ATMEGA32U4, which can mimic USB HID devices.
+//----------------------------------------------------------------------------
+// These are currently supported boards configurations (with an ATMEGA32U4) 
+// that can mimic USB HID devices.
+
 #if defined(ARDUINO_AVR_PROMICRO)
   constexpr int FEEDBACK_LED = 17; // RX LED
   #define LED_ON  LOW
@@ -13,16 +18,23 @@
   #error "Unexpected target defined."
 #endif
 
+//----------------------------------------------------------------------------
+// There is an indicator LED that stays on for a period when activity occurs.
+
 constexpr int16_t loop_period = 100;      // milliseconds
 constexpr uint16_t initial_light_on = 10; // loop periods
 
 uint16_t light_on_count = initial_light_on;
+
+//----------------------------------------------------------------------------
 
 void setup()
 {
   pinMode(FEEDBACK_LED, OUTPUT);  // Set RX LED as an output
   Serial.begin(115200);
 }
+
+//----------------------------------------------------------------------------
 
 void HandleSerialInput();
 
@@ -37,6 +49,10 @@ void loop()
 
   delay(loop_period); // more or less
 }
+
+//----------------------------------------------------------------------------
+// The main handler for serial input. This accumulates input from the serial
+// port and enters accumulates it into a command.
 
 enum State { Start, Accumulating, Ignoring };
 State state = Start;
@@ -56,9 +72,8 @@ void HandleSerialInput()
   }
 }
 
-bool IsCommandTerminator(char ch) {
-  return ch == '\r' || ch == '\n';
-}
+//----------------------------------------------------------------------------
+// Collects user input into a buffer.
 
 struct CommandBuffer {
   char buffer[command_buffer_length];
@@ -88,6 +103,14 @@ struct CommandBuffer {
 
   int8_t Length() const { return in_use; }
 };
+
+//----------------------------------------------------------------------------
+// Accumulate user inputs into a command buffer. Handle the input when
+// it is complete. User input is also echoed to the user.
+
+bool IsCommandTerminator(char ch) {
+  return ch == '\r' || ch == '\n';
+}
 
 void HandleCommand(const CommandBuffer& command_buffer);
 
@@ -130,6 +153,9 @@ State AccumulateUserInput(State state, char ch) {
   return newState;
 }
 
+//----------------------------------------------------------------------------
+// Handles commands received from the user.
+
 void ShowMenu();
 
 #define COMMAND_BATTLE "battle"
@@ -146,13 +172,16 @@ void HandleCommand(const CommandBuffer& command_buffer) {
   }
 
   if (strcasecmp(command_buffer.c_str(), COMMAND_BATTLE) == 0) {
-    Serial.println("You battle the orc; you die");
+    Serial.println("You battle the orc; you lose");
   }
   else {
     Serial.print("Unimplemented function: "); Serial.println(command_buffer.c_str());
     Serial.println("Enter ? to get a command menu.");
   }
 }
+
+//----------------------------------------------------------------------------
+// Print the help menu.
 
 void ShowMenu() {
   Serial.println("Menu of commands:");
