@@ -1,21 +1,16 @@
 // Echos inputs back to the serial port.
 
 // These are boards built on an ATMEGA32U4, which can mimic USB HID devices.
-#define SPARKFUN_PRO_MICRO_QWIIC
-//#define ACROBOTIC_PRO_MICRO_BEETLE
-
-#if defined(SPARKFUN_PRO_MICRO_QWIIC) && defined(ACROBOTIC_PRO_MICRO_BEETLE)
-  #error "Target only one board at a time."
-#elif defined(SPARKFUN_PRO_MICRO_QWIIC)
+#if defined(ARDUINO_AVR_PROMICRO)
   constexpr int FEEDBACK_LED = 17; // RX LED
   #define LED_ON  LOW
   #define LED_OFF HIGH
-#elif defined(ACROBOTIC_PRO_MICRO_BEETLE)
+#elif defined(ARDUINO_AVR_LEONARDO)
   constexpr int FEEDBACK_LED = 13; // LED
   #define LED_ON  HIGH
   #define LED_OFF LOW
 #else
-  #error "No target defined."
+  #error "Unexpected target defined."
 #endif
 
 constexpr int16_t loop_period = 100;      // milliseconds
