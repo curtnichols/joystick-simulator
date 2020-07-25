@@ -2,6 +2,8 @@
 // This program receives input on the serial port and responds back
 // on the serial port after parsing the input.
 
+#include <avr/wdt.h>
+
 //----------------------------------------------------------------------------
 // These are currently supported boards configurations (with an ATMEGA32U4) 
 // that can mimic USB HID devices.
@@ -40,6 +42,15 @@ void setup()
 {
   pinMode(FEEDBACK_LED, OUTPUT);  // Set RX LED as an output
   Serial.begin(115200);
+
+  // Give the terminal program a chance to reconnect; this way the serial
+  // "started" message can be seen.
+  delay(1000);
+  Serial.println("** joystick-simulator started **");
+
+  // Leave ample time here. If it gets in a reset loop, it can be difficult
+  // to reprogram the board.
+  wdt_enable(WDTO_4S);
 }
 
 //----------------------------------------------------------------------------
@@ -48,6 +59,8 @@ void HandleSerialInput();
 
 void loop()
 {
+  wdt_reset();
+  
   digitalWrite(FEEDBACK_LED, light_on_count ? LED_ON : LED_OFF);
   HandleSerialInput();
 
