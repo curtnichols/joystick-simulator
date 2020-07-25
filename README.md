@@ -9,6 +9,7 @@ Arduino board, accepting joystick control commands from input on the serial port
 Initial steps include:
 
 - [x] Rudimentary receipt, parsing, and response to serial inputs from a user.
+- [x] Add watchdog timer.
 - [ ] Achieve working configuration of a joystick HID device while maintaining working serial I/O.
 - [ ] Add parsing and feedback for joystick-related control from serial input.
 
